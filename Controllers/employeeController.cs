@@ -4,8 +4,7 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Zero_Hunger.Auth;
-using Zero_Hunger.DB;
+using Zero_Hunger.EF;
 using Zero_Hunger.Models;
 
 namespace Zero_Hunger.Controllers
@@ -14,16 +13,14 @@ namespace Zero_Hunger.Controllers
     {
         // GET: employee
         [HttpGet]
-        [empAccess]
         public ActionResult Index()
         {
             return View();
         }
-        [empAccess]
         [HttpGet]
         public ActionResult collectRequest(int id)
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             request rq = db.requests.Find(id);
             if(rq==null)
             {
@@ -38,25 +35,22 @@ namespace Zero_Hunger.Controllers
             }
             return RedirectToAction("requestlist");
         }
-        [empAccess]
         [HttpGet]
         public ActionResult requestlist()
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             return View(db.employees.Find((int)Session["id"]).requests.ToList());
         }
-        [empAccess]
         [HttpGet]
         public ActionResult requestdetails(int id)
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             return View(db.requests.Find(id));
         }
-        [empAccess]
         [HttpGet]
         public ActionResult restaurantDetails(int id)
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             return View(db.restaurants.Find(id));
         }
         [HttpGet]
@@ -69,7 +63,7 @@ namespace Zero_Hunger.Controllers
         {
             if (ModelState.IsValid)
             {
-                var db = new zero_hungerEntities();
+                var db = new ZeroHunger1Entities();
                 var user = (from u in db.employees
                             where
                                 u.username.Equals(obj.username) &&

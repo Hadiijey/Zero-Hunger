@@ -4,12 +4,12 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="ZeroHunger1Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="admin">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id" Type="int" Nullable="false" />
           <Property Name="username" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="password" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
@@ -17,7 +17,7 @@
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id" Type="int" Nullable="false" />
           <Property Name="username" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="password" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="50" Nullable="false" />
@@ -25,35 +25,33 @@
           <Property Name="phone" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="address" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="dob" Type="date" Nullable="false" />
-          <Property Name="admin_id" Type="int" />
+          <Property Name="admin_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="food">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="quantity" />
           </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id" Type="int" Nullable="false" />
           <Property Name="type" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="quantity" Type="int" Nullable="false" />
-          <Property Name="request_id" Type="int" />
+          <Property Name="request_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="request">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id" Type="int" Nullable="false" />
           <Property Name="status" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="order_datetime" Type="date" Nullable="false" />
-          <Property Name="expire_datetime" Type="date" Nullable="false" />
           <Property Name="total_quantity" Type="int" Nullable="false" />
-          <Property Name="restaurant_id" Type="int" />
-          <Property Name="employee_id" Type="int" />
-          <Property Name="admin_id" Type="int" />
+          <Property Name="restaurant_id" Type="int" Nullable="false" />
+          <Property Name="employee_id" Type="int" Nullable="false" />
+          <Property Name="admin_id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="restaurant">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id" Type="int" Nullable="false" />
           <Property Name="username" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="password" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="50" Nullable="false" />
@@ -62,7 +60,7 @@
           <Property Name="address" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <Association Name="FK_employee_admin">
-          <End Role="admin" Type="Self.admin" Multiplicity="0..1" />
+          <End Role="admin" Type="Self.admin" Multiplicity="1" />
           <End Role="employee" Type="Self.employee" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="admin">
@@ -73,20 +71,8 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_food_request">
-          <End Role="request" Type="Self.request" Multiplicity="0..1" />
-          <End Role="food" Type="Self.food" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="request">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="food">
-              <PropertyRef Name="request_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_request_admin">
-          <End Role="admin" Type="Self.admin" Multiplicity="0..1" />
+          <End Role="admin" Type="Self.admin" Multiplicity="1" />
           <End Role="request" Type="Self.request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="admin">
@@ -98,7 +84,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_request_employee">
-          <End Role="employee" Type="Self.employee" Multiplicity="0..1" />
+          <End Role="employee" Type="Self.employee" Multiplicity="1" />
           <End Role="request" Type="Self.request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employee">
@@ -109,8 +95,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_request_food">
+          <End Role="food" Type="Self.food" Multiplicity="1" />
+          <End Role="request" Type="Self.request" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="food">
+              <PropertyRef Name="quantity" />
+            </Principal>
+            <Dependent Role="request">
+              <PropertyRef Name="total_quantity" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_request_restaurant">
-          <End Role="restaurant" Type="Self.restaurant" Multiplicity="0..1" />
+          <End Role="restaurant" Type="Self.restaurant" Multiplicity="1" />
           <End Role="request" Type="Self.request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="restaurant">
@@ -121,7 +119,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="ModelStoreContainer">
+        <EntityContainer Name="ZeroHunger1ModelStoreContainer">
           <EntitySet Name="admin" EntityType="Self.admin" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="employee" EntityType="Self.employee" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="food" EntityType="Self.food" Schema="dbo" store:Type="Tables" />
@@ -131,16 +129,16 @@
             <End Role="admin" EntitySet="admin" />
             <End Role="employee" EntitySet="employee" />
           </AssociationSet>
-          <AssociationSet Name="FK_food_request" Association="Self.FK_food_request">
-            <End Role="request" EntitySet="request" />
-            <End Role="food" EntitySet="food" />
-          </AssociationSet>
           <AssociationSet Name="FK_request_admin" Association="Self.FK_request_admin">
             <End Role="admin" EntitySet="admin" />
             <End Role="request" EntitySet="request" />
           </AssociationSet>
           <AssociationSet Name="FK_request_employee" Association="Self.FK_request_employee">
             <End Role="employee" EntitySet="employee" />
+            <End Role="request" EntitySet="request" />
+          </AssociationSet>
+          <AssociationSet Name="FK_request_food" Association="Self.FK_request_food">
+            <End Role="food" EntitySet="food" />
             <End Role="request" EntitySet="request" />
           </AssociationSet>
           <AssociationSet Name="FK_request_restaurant" Association="Self.FK_request_restaurant">
@@ -152,12 +150,12 @@
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="ZeroHunger1Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="admin">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id" Type="Int32" Nullable="false" />
           <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="employees" Relationship="Self.FK_employee_admin" FromRole="admin" ToRole="employee" />
@@ -167,7 +165,7 @@
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id" Type="Int32" Nullable="false" />
           <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
@@ -175,42 +173,40 @@
           <Property Name="phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="address" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="dob" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="admin_id" Type="Int32" />
+          <Property Name="admin_id" Type="Int32" Nullable="false" />
           <NavigationProperty Name="admin" Relationship="Self.FK_employee_admin" FromRole="employee" ToRole="admin" />
           <NavigationProperty Name="requests" Relationship="Self.FK_request_employee" FromRole="employee" ToRole="request" />
         </EntityType>
         <EntityType Name="food">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="quantity" />
           </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id" Type="Int32" Nullable="false" />
           <Property Name="type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="quantity" Type="Int32" Nullable="false" />
-          <Property Name="request_id" Type="Int32" />
-          <NavigationProperty Name="request" Relationship="Self.FK_food_request" FromRole="food" ToRole="request" />
+          <Property Name="request_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="requests" Relationship="Self.FK_request_food" FromRole="food" ToRole="request" />
         </EntityType>
         <EntityType Name="request">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id" Type="Int32" Nullable="false" />
           <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="order_datetime" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="expire_datetime" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="total_quantity" Type="Int32" Nullable="false" />
-          <Property Name="restaurant_id" Type="Int32" />
-          <Property Name="employee_id" Type="Int32" />
-          <Property Name="admin_id" Type="Int32" />
+          <Property Name="restaurant_id" Type="Int32" Nullable="false" />
+          <Property Name="employee_id" Type="Int32" Nullable="false" />
+          <Property Name="admin_id" Type="Int32" Nullable="false" />
           <NavigationProperty Name="admin" Relationship="Self.FK_request_admin" FromRole="request" ToRole="admin" />
           <NavigationProperty Name="employee" Relationship="Self.FK_request_employee" FromRole="request" ToRole="employee" />
-          <NavigationProperty Name="foods" Relationship="Self.FK_food_request" FromRole="request" ToRole="food" />
+          <NavigationProperty Name="food" Relationship="Self.FK_request_food" FromRole="request" ToRole="food" />
           <NavigationProperty Name="restaurant" Relationship="Self.FK_request_restaurant" FromRole="request" ToRole="restaurant" />
         </EntityType>
         <EntityType Name="restaurant">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id" Type="Int32" Nullable="false" />
           <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
@@ -220,7 +216,7 @@
           <NavigationProperty Name="requests" Relationship="Self.FK_request_restaurant" FromRole="restaurant" ToRole="request" />
         </EntityType>
         <Association Name="FK_employee_admin">
-          <End Role="admin" Type="Self.admin" Multiplicity="0..1" />
+          <End Role="admin" Type="Self.admin" Multiplicity="1" />
           <End Role="employee" Type="Self.employee" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="admin">
@@ -232,7 +228,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_request_admin">
-          <End Role="admin" Type="Self.admin" Multiplicity="0..1" />
+          <End Role="admin" Type="Self.admin" Multiplicity="1" />
           <End Role="request" Type="Self.request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="admin">
@@ -244,7 +240,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_request_employee">
-          <End Role="employee" Type="Self.employee" Multiplicity="0..1" />
+          <End Role="employee" Type="Self.employee" Multiplicity="1" />
           <End Role="request" Type="Self.request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employee">
@@ -255,20 +251,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_food_request">
-          <End Role="request" Type="Self.request" Multiplicity="0..1" />
-          <End Role="food" Type="Self.food" Multiplicity="*" />
+        <Association Name="FK_request_food">
+          <End Role="food" Type="Self.food" Multiplicity="1" />
+          <End Role="request" Type="Self.request" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="request">
-              <PropertyRef Name="id" />
+            <Principal Role="food">
+              <PropertyRef Name="quantity" />
             </Principal>
-            <Dependent Role="food">
-              <PropertyRef Name="request_id" />
+            <Dependent Role="request">
+              <PropertyRef Name="total_quantity" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_request_restaurant">
-          <End Role="restaurant" Type="Self.restaurant" Multiplicity="0..1" />
+          <End Role="restaurant" Type="Self.restaurant" Multiplicity="1" />
           <End Role="request" Type="Self.request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="restaurant">
@@ -279,7 +275,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="zero_hungerEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="ZeroHunger1Entities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="admins" EntityType="Self.admin" />
           <EntitySet Name="employees" EntityType="Self.employee" />
           <EntitySet Name="foods" EntityType="Self.food" />
@@ -297,9 +293,9 @@
             <End Role="employee" EntitySet="employees" />
             <End Role="request" EntitySet="requests" />
           </AssociationSet>
-          <AssociationSet Name="FK_food_request" Association="Self.FK_food_request">
-            <End Role="request" EntitySet="requests" />
+          <AssociationSet Name="FK_request_food" Association="Self.FK_request_food">
             <End Role="food" EntitySet="foods" />
+            <End Role="request" EntitySet="requests" />
           </AssociationSet>
           <AssociationSet Name="FK_request_restaurant" Association="Self.FK_request_restaurant">
             <End Role="restaurant" EntitySet="restaurants" />
@@ -311,9 +307,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="ModelStoreContainer" CdmEntityContainer="zero_hungerEntities">
+        <EntityContainerMapping StorageEntityContainer="ZeroHunger1ModelStoreContainer" CdmEntityContainer="ZeroHunger1Entities1">
           <EntitySetMapping Name="admins">
-            <EntityTypeMapping TypeName="Model.admin">
+            <EntityTypeMapping TypeName="ZeroHunger1Model.admin">
               <MappingFragment StoreEntitySet="admin">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="username" ColumnName="username" />
@@ -322,7 +318,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="employees">
-            <EntityTypeMapping TypeName="Model.employee">
+            <EntityTypeMapping TypeName="ZeroHunger1Model.employee">
               <MappingFragment StoreEntitySet="employee">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="username" ColumnName="username" />
@@ -337,7 +333,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="foods">
-            <EntityTypeMapping TypeName="Model.food">
+            <EntityTypeMapping TypeName="ZeroHunger1Model.food">
               <MappingFragment StoreEntitySet="food">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="type" ColumnName="type" />
@@ -347,12 +343,10 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="requests">
-            <EntityTypeMapping TypeName="Model.request">
+            <EntityTypeMapping TypeName="ZeroHunger1Model.request">
               <MappingFragment StoreEntitySet="request">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="order_datetime" ColumnName="order_datetime" />
-                <ScalarProperty Name="expire_datetime" ColumnName="expire_datetime" />
                 <ScalarProperty Name="total_quantity" ColumnName="total_quantity" />
                 <ScalarProperty Name="restaurant_id" ColumnName="restaurant_id" />
                 <ScalarProperty Name="employee_id" ColumnName="employee_id" />
@@ -361,7 +355,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="restaurants">
-            <EntityTypeMapping TypeName="Model.restaurant">
+            <EntityTypeMapping TypeName="ZeroHunger1Model.restaurant">
               <MappingFragment StoreEntitySet="restaurant">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="username" ColumnName="username" />

@@ -5,8 +5,7 @@ using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Zero_Hunger.Auth;
-using Zero_Hunger.DB;
+using Zero_Hunger.EF;
 using Zero_Hunger.Models;
 
 namespace Zero_Hunger.Controllers
@@ -14,27 +13,23 @@ namespace Zero_Hunger.Controllers
     public class restaurantController : Controller
     {
         // GET: restaurant
-        [restAccess]
         [HttpGet]
         public ActionResult Index()
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             return View(db.restaurants.Find((int)Session["id"]).requests.ToList());
         }
-        [restAccess]
         [HttpGet]
         public ActionResult add()
         {
             return View();
         }
-        [restAccess]
         [HttpGet]
         public ActionResult clear()
         {
             Session["foodlist"] = null;
             return RedirectToAction("cart");
         }
-        [restAccess]
         [HttpGet]
         public ActionResult checkout()
         {
@@ -45,7 +40,6 @@ namespace Zero_Hunger.Controllers
             }
             return View();
         }
-        [restAccess]
         [HttpPost]
         public ActionResult checkout(processRequestDTO pr)
         {
@@ -56,12 +50,10 @@ namespace Zero_Hunger.Controllers
             }
             if(ModelState.IsValid)
             {
-                var db = new zero_hungerEntities();
+                var db = new ZeroHunger1Entities();
                 request rq = new request()
                 {
                     status = "Processing",
-                    order_datetime = DateTime.Now,
-                    expire_datetime = pr.expire_datetime,
                     restaurant_id = (int)Session["id"]
                 };
                 db.requests.Add(rq);
@@ -83,14 +75,12 @@ namespace Zero_Hunger.Controllers
             }
             return View(pr);
         }
-        [restAccess]
         [HttpGet]
         public ActionResult requestdetails(int id)
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             return View(db.requests.Find(id));
         }
-        [restAccess]
         [HttpPost]
         public ActionResult add(addFoodDTO afDTO)
         {
@@ -112,7 +102,6 @@ namespace Zero_Hunger.Controllers
             }
             return View(afDTO);
         }
-        [restAccess]
         [HttpGet]
         public ActionResult cart()
         {
@@ -128,7 +117,7 @@ namespace Zero_Hunger.Controllers
         {
             if (ModelState.IsValid)
             {
-                var db = new zero_hungerEntities();
+                var db = new ZeroHunger1Entities();
                 var user = (from u in db.restaurants
                             where
                                 u.username.Equals(obj.username) &&
@@ -166,7 +155,7 @@ namespace Zero_Hunger.Controllers
         {
             if (ModelState.IsValid)
             {
-                var db = new zero_hungerEntities();
+                var db = new ZeroHunger1Entities();
                 db.restaurants.Add(convert(obj));
                 db.SaveChanges();
                 TempData["msg"] = "Successfully signed up";

@@ -4,8 +4,6 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Zero_Hunger.Auth;
-using Zero_Hunger.EF;
 using Zero_Hunger.EF;
 using Zero_Hunger.Models;
 
@@ -14,43 +12,40 @@ namespace Zero_Hunger.Controllers
     public class adminController : Controller
     {
         // GET: employee
-        [adminAccess]
         public ActionResult Index()
         {
             return View();
         }
-        [adminAccess]
         public ActionResult employeelist()
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             return View(db.employees.ToList());
         }
-        [adminAccess]
         [HttpGet]
         public ActionResult restaurantDetails(int id)
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             return View(db.restaurants.Find(id));
         }
-        [adminAccess]
+
         public ActionResult requestlist()
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             return View(db.requests.ToList());
         }
-        [adminAccess]
+
         [HttpGet]
         public ActionResult requestdetails(int id)
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             ViewBag.empList=db.employees.ToList();
             return View(db.requests.Find(id));
         }
-        [adminAccess]
+
         [HttpPost]
         public ActionResult requestdetails(int id, assignEmpDTO obj)
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             if (ModelState.IsValid)
             {
                 employee emp = db.employees.Find(obj.emp_id);
@@ -71,10 +66,10 @@ namespace Zero_Hunger.Controllers
             }
             return View(db.requests.Find(id));
         }
-        [adminAccess]
+
         public ActionResult deleteEmployee(int id)
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             db.employees.Remove(db.employees.Find(id));
             db.SaveChanges(); 
             TempData["msg"] = "Employee of ID " + id + " has been deleted";
@@ -85,7 +80,7 @@ namespace Zero_Hunger.Controllers
         {
             if(ModelState.IsValid)
             {
-                var db = new zero_hungerEntities();
+                var db = new ZeroHunger1Entities();
                 var user = (from u in db.admins
                             where 
                                 u.username.Equals(obj.username) &&
@@ -117,18 +112,16 @@ namespace Zero_Hunger.Controllers
             return RedirectToAction("login");
         }
         [HttpGet]
-        [adminAccess]
         public ActionResult addemployee() 
         {
             return View();
         }
         [HttpPost]
-        [adminAccess]
         public ActionResult addemployee(addemployeeDTO empModel) 
         {
             if(ModelState.IsValid)
             {
-                var db = new zero_hungerEntities();
+                var db = new ZeroHunger1Entities();
                 db.employees.Add(convert(empModel));
                 db.SaveChanges();
                 TempData["msg"] = "New employee is added successfully";
@@ -137,10 +130,9 @@ namespace Zero_Hunger.Controllers
             return View(empModel);
         }
         [HttpGet]
-        [adminAccess]
         public ActionResult editEmployee(int id) 
         {
-            var db = new zero_hungerEntities();
+            var db = new ZeroHunger1Entities();
             employee emp = db.employees.Find(id);
             editEmployeeDTO empDTO = new editEmployeeDTO()
             {
@@ -155,12 +147,11 @@ namespace Zero_Hunger.Controllers
             return View(empDTO);
         }
         [HttpPost]
-        [adminAccess]
         public ActionResult editEmployee(editEmployeeDTO empModel) 
         {
             if(ModelState.IsValid)
             {
-                var db = new zero_hungerEntities();
+                var db = new ZeroHunger1Entities();
                 employee emp = db.employees.Find(empModel.id);
 
                 emp.username = empModel.username;
@@ -188,7 +179,7 @@ namespace Zero_Hunger.Controllers
                 dob = empDTO.dob,
                 username = empDTO.username,
                 password = empDTO.password,
-                admin_id = (int?)Session["id"]
+                admin_id = (int)(int?)Session["id"]
             };
             return emp;
         }

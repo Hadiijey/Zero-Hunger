@@ -1,4 +1,4 @@
-﻿@model List<Zero_Hunger.DB.request>
+﻿@model List<Zero_Hunger.EF.request>
 @{
     ViewBag.Title = "requestlist";
     Layout = "~/Views/Shared/_empLayout.cshtml";
@@ -23,8 +23,6 @@
         <table class="table table-bordered">
             <tr>
                 <th>ID</th>
-                <th>Order Date</th>
-                <th>Expire Date</th>
                 <th>Total Quantity</th>
                 <th>Requested By</th>
                 <th>Details</th>
@@ -34,8 +32,7 @@
             {
                 <tr>
                     <th>@request.id</th>
-                    <th>@request.order_datetime</th>
-                    <th>@request.expire_datetime</th>
+    
                     <th>@request.total_quantity</th>
                     <th>
                         <a href="/employee/restaurantDetails/@request.restaurant.id.ToString()">
